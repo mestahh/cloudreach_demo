@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "cloudreach-demo"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-g349m8a3dgab"
+s3_prefix = "cloudreach-demo"
+region = "eu-west-1"
+profile = "mestahh"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []

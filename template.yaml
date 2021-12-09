@@ -10,19 +10,60 @@ Globals:
     Timeout: 3
 
 Resources:
-  HelloWorldFunction:
+  GpsTable:
+    Type: AWS::Serverless::SimpleTable
+    PrimaryKeyObject: 
+      Name: id
+      Type: String
+    TableName: GpsTable
+
+  RestApi2Function:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: hello_world/
+      CodeUri: get_data/
       Handler: app.lambda_handler
       Runtime: python3.8
       Architectures:
         - x86_64
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref GpsTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref GpsTable
       Events:
-        HelloWorld:
-          Type: Api 
+        HotspotApi:
+          Type: Api
           Properties:
-            Path: /hello
-            Method: get
+            Method: GET
+            Path: /hotspotdata
+            RequestParameters:
+              - method.request.querystring.longitude:
+                  Required: true
+              - method.request.querystring.latitude:
+                  Required: true
+    
+  RestApi1Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: create_data/
+      Handler: app.lambda_handler
+      Runtime: python3.8
+      Architectures:
+        - x86_64
+      Policies:
+        - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref GpsTable
+      Events:
+        PostData:
+          Type: Api
+          Properties:
+            Method: POST
+            Path: /hotspotdata
+
+          
+
 
 
